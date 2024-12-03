@@ -1,5 +1,6 @@
 package br.com.gabrielsilva.todolist.user;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,6 +21,8 @@ public class UserController {
         if(username != null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário já existe");
         }
+        var passwordHashred = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+        user.setPassword(passwordHashred);
         var userCreated = iUserRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
     }
